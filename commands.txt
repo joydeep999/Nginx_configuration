@@ -1,0 +1,50 @@
+# Read the comments in this file carefully.
+
+# The best way to install the Nginx is by installing it through the Source code
+# After fetching the nginx .tar.gz file and unzipping it
+# you can use the below command to configure Nginx with added modules and install it with make file
+
+./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module --with-http_image_filter_module=dynamic --modules-path=/etc/nginx/modules --with-http_v2_module
+
+make
+
+make install
+
+# These are the packages those should be installed before installing Nginx
+# In-order for the configurations to work
+# Libraries
+
+apt-get install build-essential -y
+
+apt-get install libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev -y
+
+apt-get install php-fpm php-mysql
+
+# Inside the events context
+# worker_connections is set to 1024
+# I have kept the Soft limit
+# you can set it with respect to your machines processes it can handle upto Hard limit or Soft limit
+# to check it out
+
+ulimit -Hn
+ulimit -Sn
+
+# To enable SSL(secure socket layer) connectvity to your website
+# Create a ssl drectory under the /etc/nginx
+# Following modules should be added in your Nginx webserver along with the above mentioned libraries
+# and added modules
+
+--with-http_v2_module, --with-http_ssl_module
+
+# Fire this following commands to create your own self-signed Key and certificate and DH param(Diffie-hellman)
+# This will allow your server to perform key echanges between the client and server
+
+openssl req -x509 -days 365 -nodes -newkey rsa:2048 -keyout /etc/nginx/self.key -out /etc/nginx/ssl/self.crt
+
+# The above command will create a key and cert file inside the ssl directory under /etc/nginx
+# The below command will create a .pem file inside the same directory (/etc/nginx/ssl)
+# Remember the size (2048) should be the same size you gave while creating the key
+
+openssl dhparam 2048 -out /etc/nginx/ssl/dhparam.pem
+
+#############################################################
